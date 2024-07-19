@@ -1,11 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import Signup from './components/Signup';
 import Login from './components/Login';
-import { AppBar, Tabs, Tab, Box, Container } from '@mui/material';
-import { useState } from 'react';
+import EditProfile from './components/EditProfile';
+import { AppBar, Tabs, Tab, Box, Container, Button, Typography } from '@mui/material';
+import { AuthProvider, useAuth } from './context/AuthContext';
 
 const App: React.FC = () => {
+  return (
+    <AuthProvider>
+      <Router>
+        <Container>
+          <NavTabs />
+          <Box mt={3}>
+            <Routes>
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/edit-profile" element={<PrivateRoute component={EditProfile} />} />
+            </Routes>
+          </Box>
+        </Container>
+      </Router>
+    </AuthProvider>
+  );
+};
+
+const NavTabs: React.FC = () => {
+  const { token, logout } = useAuth();
   const [value, setValue] = useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -13,23 +34,29 @@ const App: React.FC = () => {
   };
 
   return (
-    <Router>
-      <Container>
-        <AppBar position="static">
-          <Tabs value={value} onChange={handleChange} centered>
-            <Tab label="Signup" component={Link} to="/signup" />
-            <Tab label="Login" component={Link} to="/login" />
-          </Tabs>
-        </AppBar>
-        <Box mt={3}>
-          <Routes>
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/login" element={<Login />} />
-          </Routes>
+    <>
+      <AppBar position="static">
+        <Tabs value={value} onChange={handleChange} centered>
+          <Tab label="Signup" component={Link} to="/signup" />
+          <Tab label="Login" component={Link} to="/login" />
+          {token && <Tab label="Edit Profile" component={Link} to="/edit-profile" />}
+        </Tabs>
+      </AppBar>
+      {token && (
+        <Box mt={2} textAlign="center">
+          <Button variant="contained" color="secondary" onClick={logout}>
+            Logout
+          </Button>
         </Box>
-      </Container>
-    </Router>
+      )}
+    </>
   );
+};
+
+const PrivateRoute: React.FC<{ component: React.ComponentType }> = ({ component: Component }) => {
+  const { token } = useAuth();
+
+  return token ? <Component /> : <Box textAlign="center" mt={5}><Typography variant="h6">You need to log in to access this page</Typography></Box>;
 };
 
 export default App;

@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import apiClient from '../api/axios';
 import { Container, TextField, Button, Typography, Box, Alert } from '@mui/material';
+import { useAuth } from '../context/AuthContext';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
-  const [token, setToken] = useState('');
+  const { login } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -15,7 +16,7 @@ const Login: React.FC = () => {
         email,
         password,
       });
-      setToken(response.data);
+      login(response.data);  // Store the token in the context
       setMessage('Login successful');
     } catch (error: any) {
       if (error.response) {
@@ -60,11 +61,6 @@ const Login: React.FC = () => {
         {message && (
           <Alert severity={message === 'Login successful' ? 'success' : 'error'} sx={{ mt: 2 }}>
             {message}
-          </Alert>
-        )}
-        {token && (
-          <Alert severity="info" sx={{ mt: 2 }}>
-            Token: {token}
           </Alert>
         )}
       </Box>
