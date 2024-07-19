@@ -1,5 +1,6 @@
 package com.example.instagramclonebackend.controller;
 
+import com.example.instagramclonebackend.model.UpdatePasswordRequest;
 import com.example.instagramclonebackend.model.User;
 import com.example.instagramclonebackend.service.UserService;
 import io.jsonwebtoken.Jwts;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,5 +60,20 @@ public class AuthController {
                 .compact();
 
         return ResponseEntity.ok(token);
+    }
+
+    @PostMapping("/update-password")
+    public ResponseEntity<String> updatePassword(@RequestBody UpdatePasswordRequest updatePasswordRequest) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByEmail(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!userService.checkIfValidOldPassword(user, updatePasswordRequest.getOldPassword())) {
+            return ResponseEntity.badRequest().body("Invalid old password");
+        }
+
+        userService.changeUserPassword(user, updatePasswordRequest.getNewPassword());
+        return ResponseEntity.ok("Password updated successfully");
     }
 }
