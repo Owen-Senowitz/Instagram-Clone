@@ -22,8 +22,8 @@ import java.util.Date;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/auth")
-public class AuthController {
+@RequestMapping("/user")
+public class UserController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -92,5 +92,12 @@ public class AuthController {
 
         userService.updateUser(username, updateUserRequest);
         return ResponseEntity.ok("User information updated successfully");
+    }
+
+    @GetMapping("/profile")
+    public User getUserProfile() {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = userDetails.getUsername();
+        return userService.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
     }
 }
