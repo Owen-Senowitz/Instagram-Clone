@@ -11,7 +11,7 @@ const Signup: React.FC = () => {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await apiClient.post('/auth/signup', {
+      const response = await apiClient.post('/user/signup', {
         username,
         email,
         password,

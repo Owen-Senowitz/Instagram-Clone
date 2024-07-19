@@ -33,7 +33,7 @@ const EditProfile: React.FC = () => {
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await apiClient.put('/auth/update-user', profile, {
+      await apiClient.put('/user/update-user', profile, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setMessage('Profile updated successfully');
