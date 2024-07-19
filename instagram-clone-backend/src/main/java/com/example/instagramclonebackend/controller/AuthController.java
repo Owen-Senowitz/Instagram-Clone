@@ -6,20 +6,20 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+
     @Autowired
     private AuthenticationManager authenticationManager;
 
@@ -30,23 +30,33 @@ public class AuthController {
     private String SECRET_KEY;
 
     @PostMapping("/signup")
-    public String signUp(@RequestBody User user) {
+    public ResponseEntity<String> signUp(@RequestBody User user) {
+        Optional<User> existingUserByUsername = userService.findByUsername(user.getUsername());
+        if (existingUserByUsername.isPresent()) {
+            return ResponseEntity.badRequest().body("Username is already taken");
+        }
+
+        Optional<User> existingUserByEmail = userService.findByEmail(user.getEmail());
+        if (existingUserByEmail.isPresent()) {
+            return ResponseEntity.badRequest().body("Email is already registered");
+        }
+
         userService.save(user);
-        return "User registered successfully";
+        return ResponseEntity.ok("User registered successfully");
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody User user) {
+    public ResponseEntity<String> login(@RequestBody User user) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String token = Jwts.builder()
                 .setSubject(userDetails.getUsername())
-                .setExpiration(new Date(System.currentTimeMillis() + 86400000))
+                .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 1 day
                 .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
                 .compact();
 
-        return token;
+        return ResponseEntity.ok(token);
     }
 }
