@@ -4,6 +4,7 @@ import com.example.instagramclonebackend.model.request.LoginRequest;
 import com.example.instagramclonebackend.model.request.SignUpRequest;
 import com.example.instagramclonebackend.model.request.UpdatePasswordRequest;
 import com.example.instagramclonebackend.model.dto.User;
+import com.example.instagramclonebackend.model.request.UpdateUserRequest;
 import com.example.instagramclonebackend.service.UserService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -82,5 +83,14 @@ public class AuthController {
 
         userService.changeUserPassword(user, updatePasswordRequest.getNewPassword());
         return ResponseEntity.ok("Password updated successfully");
+    }
+
+    @PutMapping("/update-user")
+    public ResponseEntity<String> updateUser(@RequestBody UpdateUserRequest updateUserRequest) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        userService.updateUser(username, updateUserRequest);
+        return ResponseEntity.ok("User information updated successfully");
     }
 }

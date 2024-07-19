@@ -1,6 +1,7 @@
 package com.example.instagramclonebackend.service;
 
 import com.example.instagramclonebackend.model.dto.User;
+import com.example.instagramclonebackend.model.request.UpdateUserRequest;
 import com.example.instagramclonebackend.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -48,6 +49,19 @@ public class UserService implements UserDetailsService {
 
     public void changeUserPassword(User user, String newPassword) {
         user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+
+    public void updateUser(String username, UpdateUserRequest updateUserRequest) {
+        User user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setUsername(updateUserRequest.getUsername());
+        user.setFirstName(updateUserRequest.getFirstName());
+        user.setLastName(updateUserRequest.getLastName());
+        user.setBio(updateUserRequest.getBio());
+        user.setProfilePictureUrl(updateUserRequest.getProfilePictureUrl());
+
         userRepository.save(user);
     }
 }
