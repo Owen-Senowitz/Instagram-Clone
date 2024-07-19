@@ -1,6 +1,10 @@
 package com.example.instagramclonebackend.configuration;
 
+import com.example.instagramclonebackend.repository.UserRepository;
 import com.example.instagramclonebackend.service.UserService;
+import com.example.instagramclonebackend.util.JwtRequestFilter;
+import com.example.instagramclonebackend.util.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -11,46 +15,55 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private static final String[] AUTH_WHITELIST = {
-            "/promethus/**",
-            "/auth/**"
-    };
+    private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
 
-    private static final String[] AUTH_BLACKLIST = {
-    };
+    public SecurityConfig(UserRepository userRepository, JwtUtil jwtUtil) {
+        this.userRepository = userRepository;
+        this.jwtUtil = jwtUtil;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.csrf(csrfSpec -> csrfSpec.disable())
-                .authorizeHttpRequests(authSpec -> authSpec
-                        .requestMatchers(AUTH_WHITELIST).permitAll()
-                        .requestMatchers(AUTH_BLACKLIST).hasRole("USER")
+        http.csrf(csrf -> csrf.disable())
+                .authorizeRequests(auth -> auth
+                        .requestMatchers("/auth/**").permitAll()
                         .anyRequest().authenticated())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class)
                 .httpBasic(Customizer.withDefaults())
                 .exceptionHandling(exceptionSpec -> exceptionSpec
                         .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
-                .logout(logoutSpec -> logoutSpec.disable())
-                .build();
+                .logout(logoutSpec -> logoutSpec.disable());
+
+        return http.build();
     }
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return new UserService((BCryptPasswordEncoder) passwordEncoder());
+        return new UserService(userRepository, passwordEncoder());
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public JwtRequestFilter jwtRequestFilter() {
+        return new JwtRequestFilter(jwtUtil, userDetailsService());
     }
 
     @Bean
