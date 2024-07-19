@@ -1,7 +1,9 @@
 package com.example.instagramclonebackend.controller;
 
-import com.example.instagramclonebackend.model.UpdatePasswordRequest;
-import com.example.instagramclonebackend.model.User;
+import com.example.instagramclonebackend.model.request.LoginRequest;
+import com.example.instagramclonebackend.model.request.SignUpRequest;
+import com.example.instagramclonebackend.model.request.UpdatePasswordRequest;
+import com.example.instagramclonebackend.model.dto.User;
 import com.example.instagramclonebackend.service.UserService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -32,7 +34,7 @@ public class AuthController {
     private String SECRET_KEY;
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signUp(@RequestBody User user) {
+    public ResponseEntity<String> signUp(@RequestBody SignUpRequest user) {
         Optional<User> existingUserByUsername = userService.findByUsername(user.getUsername());
         if (existingUserByUsername.isPresent()) {
             return ResponseEntity.badRequest().body("Username is already taken");
@@ -43,12 +45,17 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Email is already registered");
         }
 
-        userService.save(user);
+        User newUser = new User();
+        newUser.setUsername(user.getUsername());
+        newUser.setPassword(user.getPassword());
+        newUser.setEmail(user.getEmail());
+
+        userService.save(newUser);
         return ResponseEntity.ok("User registered successfully");
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody User user) {
+    public ResponseEntity<String> login(@RequestBody LoginRequest user) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
 

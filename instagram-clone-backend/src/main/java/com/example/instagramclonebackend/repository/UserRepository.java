@@ -1,6 +1,6 @@
 package com.example.instagramclonebackend.repository;
 
-import com.example.instagramclonebackend.model.User;
+import com.example.instagramclonebackend.model.dto.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;

@@ -1,17 +1,10 @@
-package com.example.instagramclonebackend.model;
+package com.example.instagramclonebackend.model.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import org.springframework.data.annotation.Id;
 
 @Getter
-@Setter
-@ToString
-public class User {
-    @Id
-    private String id;
+public class SignUpRequest {
 
     @JsonProperty(value = "username")
     private String username;
