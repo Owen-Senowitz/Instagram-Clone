@@ -1,15 +1,15 @@
 # Instagram Clone Key Features
 
 ## 1. User Authentication
-- Sign up
-- Log in
-- Log out
-- Password reset
+- Sign up ✅
+- Log in ✅
+- Log out ✅
+- Password reset ✅
 
 ## 2. User Profiles
-- Profile picture
-- Bio
-- Personal info
+- Profile picture ✅
+- Bio ✅
+- Personal info ✅
 
 ## 3. Posts
 - Upload photos/videos
