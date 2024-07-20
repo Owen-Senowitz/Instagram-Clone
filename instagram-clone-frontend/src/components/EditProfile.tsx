@@ -4,6 +4,9 @@ import { Container, TextField, Button, Typography, Box, Alert } from '@mui/mater
 import { useAuth } from '../context/AuthContext';
 
 interface UserProfile {
+  id: string;
+  username: string;
+  email: string;
   firstName: string;
   lastName: string;
   bio: string;
@@ -12,7 +15,15 @@ interface UserProfile {
 
 const EditProfile: React.FC = () => {
   const { token } = useAuth();
-  const [profile, setProfile] = useState<UserProfile>({ firstName: '', lastName: '', bio: '', profilePictureUrl: '' });
+  const [profile, setProfile] = useState<UserProfile>({
+    id: '',
+    username: '',
+    email: '',
+    firstName: '',
+    lastName: '',
+    bio: '',
+    profilePictureUrl: ''
+  });
   const [message, setMessage] = useState('');
 
   useEffect(() => {
@@ -48,6 +59,24 @@ const EditProfile: React.FC = () => {
         <Typography variant="h4" component="h1" gutterBottom>
           Edit Profile
         </Typography>
+        <TextField
+          label="Username"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          value={profile.username}
+          onChange={(e) => setProfile({ ...profile, username: e.target.value })}
+          disabled
+        />
+        <TextField
+          label="Email"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          value={profile.email}
+          onChange={(e) => setProfile({ ...profile, email: e.target.value })}
+          disabled
+        />
         <TextField
           label="First Name"
           variant="outlined"
