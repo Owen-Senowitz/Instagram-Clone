@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import Signup from './components/Signup';
 import Login from './components/Login';
 import EditProfile from './components/EditProfile';
+import Home from './components/Home';
 import { AppBar, Tabs, Tab, Box, Container, Button, Typography } from '@mui/material';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
@@ -14,6 +15,7 @@ const App: React.FC = () => {
           <NavTabs />
           <Box mt={3}>
             <Routes>
+              <Route path="/" element={<Home />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/login" element={<Login />} />
               <Route path="/edit-profile" element={<PrivateRoute component={EditProfile} />} />
@@ -37,6 +39,7 @@ const NavTabs: React.FC = () => {
     <>
       <AppBar position="static">
         <Tabs value={value} onChange={handleChange} centered>
+          <Tab label="Home" component={Link} to="/" />
           <Tab label="Signup" component={Link} to="/signup" />
           <Tab label="Login" component={Link} to="/login" />
           {token && <Tab label="Edit Profile" component={Link} to="/edit-profile" />}

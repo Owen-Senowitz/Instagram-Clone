@@ -4,7 +4,6 @@ import com.example.instagramclonebackend.repository.UserRepository;
 import com.example.instagramclonebackend.service.UserService;
 import com.example.instagramclonebackend.util.JwtRequestFilter;
 import com.example.instagramclonebackend.util.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -37,11 +36,23 @@ public class SecurityConfig implements WebMvcConfigurer {
         this.jwtUtil = jwtUtil;
     }
 
+    private static final String[] WHITE_LIST = {
+            "/user/signup",
+            "/user/login",
+    };
+
+    private static final String[] BLACK_LIST = {
+            "/user/update-password",
+            "/user/updated-user",
+            "/user/profile",
+    };
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeRequests(auth -> auth
-                        .requestMatchers("/user/**").permitAll()
+                        .requestMatchers(WHITE_LIST).permitAll()
+                        .requestMatchers(BLACK_LIST).authenticated()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class)
@@ -52,6 +63,7 @@ public class SecurityConfig implements WebMvcConfigurer {
 
         return http.build();
     }
+
 
     @Bean
     public UserDetailsService userDetailsService() {
