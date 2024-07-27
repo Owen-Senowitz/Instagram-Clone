@@ -39,12 +39,14 @@ public class SecurityConfig implements WebMvcConfigurer {
     private static final String[] WHITE_LIST = {
             "/user/signup",
             "/user/login",
+            "/images/**",
     };
 
     private static final String[] BLACK_LIST = {
             "/user/update-password",
             "/user/updated-user",
             "/user/profile",
+            "/images/upload",
     };
 
     @Bean

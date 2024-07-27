@@ -70,7 +70,7 @@ const Home: React.FC = () => {
                 {item.username}
               </Typography>
             </Box>
-            <img src={item.imageUrl} alt={item.caption} style={{ width: '100%', borderRadius: '8px' }} />
+            <img src={`http://localhost:8080/images/${item.imageUrl}`} alt={item.caption} style={{ width: '100%', borderRadius: '8px' }} />
             <Typography variant="body1" mt={2}>
               {item.caption}
             </Typography>

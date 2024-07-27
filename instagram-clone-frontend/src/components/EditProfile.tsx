@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import apiClient from '../api/axios';
 import { Container, TextField, Button, Typography, Box, Alert } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
+import ImageUpload from './ImageUpload';
 
 interface UserProfile {
   id: string;
@@ -122,6 +123,7 @@ const EditProfile: React.FC = () => {
           </Alert>
         )}
       </Box>
+      <ImageUpload/>
     </Container>
   );
 };
