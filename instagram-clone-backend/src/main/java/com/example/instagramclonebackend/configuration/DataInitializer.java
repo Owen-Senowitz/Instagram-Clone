@@ -1,8 +1,10 @@
 package com.example.instagramclonebackend.configuration;
 
 import com.example.instagramclonebackend.model.dto.Image;
+import com.example.instagramclonebackend.model.dto.Post;
 import com.example.instagramclonebackend.model.dto.User;
 import com.example.instagramclonebackend.service.ImageService;
+import com.example.instagramclonebackend.service.PostService;
 import com.example.instagramclonebackend.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -19,10 +21,12 @@ public class DataInitializer {
 
     private final UserService userService;
     private final ImageService imageService;
+    private final PostService postService;
 
-    public DataInitializer(UserService userService, ImageService imageService) {
+    public DataInitializer(UserService userService, ImageService imageService, PostService postService) {
         this.userService = userService;
         this.imageService = imageService;
+        this.postService = postService;
     }
 
     @Bean
@@ -49,11 +53,14 @@ public class DataInitializer {
             user2.setBio("This is a bio for testuser2.");
             user2.setProfilePictureUrl("http://example.com/user2.jpg");
             userService.save(user2);
+            log.info("Test users added to the database.");
 
             uploadTestImage("test1.jpg");
+            log.info("Test images added to the database");
 
-            // Add more users as needed
-            log.info("Test users added to the database.");
+            postService.createPost(userService.findById(1L).get(), imageService.getImageById(1L).get(), "This is a test caption");
+            log.info("Test posts added to the database");
+
         };
     }
 
