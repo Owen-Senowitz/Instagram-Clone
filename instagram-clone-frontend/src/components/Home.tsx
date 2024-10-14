@@ -4,12 +4,27 @@ import { Container, Typography, Box, CircularProgress, Alert } from '@mui/materi
 import { useAuth } from '../context/AuthContext';
 
 interface FeedItem {
-  id: string;
-  username: string;
-  profilePictureUrl: string;
-  imageUrl: string;
+  id: number;
+  user: User;
+  image: Image;
   caption: string;
-  timestamp: string;
+  createdAt: Date;
+}
+
+interface User {
+  id: number;
+  username: string;
+  password: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  bio: string;
+  profileImageId: number;
+}
+
+interface Image {
+  id: number;
+  data: string;
 }
 
 const Home: React.FC = () => {
@@ -21,9 +36,7 @@ const Home: React.FC = () => {
   useEffect(() => {
     const fetchFeed = async () => {
       try {
-        const response = await apiClient.get('/feed', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await apiClient.get('/feed');
         setFeed(response.data);
       } catch (error: any) {
         setError('Error fetching feed');
@@ -65,17 +78,17 @@ const Home: React.FC = () => {
         feed.map((item) => (
           <Box key={item.id} sx={{ mb: 4, border: '1px solid #ccc', borderRadius: '8px', padding: '16px' }}>
             <Box display="flex" alignItems="center" mb={2}>
-              <img src={item.profilePictureUrl} alt={item.username} style={{ width: '50px', borderRadius: '50%' }} />
+              <img src={`http://localhost:8080/images/${item.user.profileImageId}`} alt={item.user.username}   style={{width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover' }}  />
               <Typography variant="h6" ml={2}>
-                {item.username}
+                {item.user.username}
               </Typography>
             </Box>
-            <img src={`http://localhost:8080/images/${item.imageUrl}`} alt={item.caption} style={{ width: '100%', borderRadius: '8px' }} />
+            <img src={`http://localhost:8080/images/${item.image.id}`} alt={item.caption} style={{ width: '100%', borderRadius: '8px' }} />
             <Typography variant="body1" mt={2}>
               {item.caption}
             </Typography>
             <Typography variant="body2" color="textSecondary">
-              {new Date(item.timestamp).toLocaleString()}
+              {new Date(item.createdAt).toLocaleString()}
             </Typography>
           </Box>
         ))

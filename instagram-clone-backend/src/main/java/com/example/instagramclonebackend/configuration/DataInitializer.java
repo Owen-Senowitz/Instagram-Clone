@@ -1,7 +1,5 @@
 package com.example.instagramclonebackend.configuration;
 
-import com.example.instagramclonebackend.model.dto.Image;
-import com.example.instagramclonebackend.model.dto.Post;
 import com.example.instagramclonebackend.model.dto.User;
 import com.example.instagramclonebackend.service.ImageService;
 import com.example.instagramclonebackend.service.PostService;
@@ -32,6 +30,9 @@ public class DataInitializer {
     @Bean
     public CommandLineRunner initData() {
         return args -> {
+
+            uploadTestImage("test1.jpg");
+            log.info("Test images added to the database");
             // Test user 1
             User user1 = new User();
             user1.setUsername("testuser1");
@@ -40,7 +41,7 @@ public class DataInitializer {
             user1.setFirstName("Test");
             user1.setLastName("User1");
             user1.setBio("This is a bio for testuser1.");
-            user1.setProfilePictureUrl("http://example.com/user1.jpg");
+            user1.setProfileImageId(1L);
             userService.save(user1);
 
             // Test user 2
@@ -51,12 +52,11 @@ public class DataInitializer {
             user2.setFirstName("Test");
             user2.setLastName("User2");
             user2.setBio("This is a bio for testuser2.");
-            user2.setProfilePictureUrl("http://example.com/user2.jpg");
+            user2.setProfileImageId(1L);
             userService.save(user2);
             log.info("Test users added to the database.");
 
-            uploadTestImage("test1.jpg");
-            log.info("Test images added to the database");
+
 
             postService.createPost(userService.findById(1L).get(), imageService.getImageById(1L).get(), "This is a test caption");
             log.info("Test posts added to the database");

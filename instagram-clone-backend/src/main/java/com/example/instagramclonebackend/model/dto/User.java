@@ -34,6 +34,6 @@ public class User {
     @JsonProperty(value = "bio")
     private String bio;
 
-    @JsonProperty(value = "profilePictureUrl")
-    private String profilePictureUrl;
+    @JsonProperty(value = "profileImageId")
+    private Long profileImageId;
 }
