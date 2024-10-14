@@ -41,6 +41,7 @@ public class SecurityConfig implements WebMvcConfigurer {
             "/user/login",
             "/images/**",
             "/posts/**",
+            "/feed/**",
             "/h2-console/**",
     };
 

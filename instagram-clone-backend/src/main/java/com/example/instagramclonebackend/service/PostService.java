@@ -4,6 +4,7 @@ import com.example.instagramclonebackend.model.dto.Image;
 import com.example.instagramclonebackend.model.dto.Post;
 import com.example.instagramclonebackend.model.dto.User;
 import com.example.instagramclonebackend.repository.PostRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -38,5 +39,9 @@ public class PostService {
 
     public List<Post> getAllPosts() {
         return postRepository.findAll();
+    }
+
+    public List<Post> getAllPostsSortedByDate() {
+        return postRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
     }
 }
