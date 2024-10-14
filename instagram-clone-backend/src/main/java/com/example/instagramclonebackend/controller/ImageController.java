@@ -1,52 +1,47 @@
 package com.example.instagramclonebackend.controller;
 
-import org.springframework.beans.factory.annotation.Value;
+import com.example.instagramclonebackend.model.dto.Image;
+import com.example.instagramclonebackend.service.ImageService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 @RestController
 @RequestMapping("/images")
 public class ImageController {
 
-    @Value("${upload.path}")
-    private String uploadPath;
+    private final ImageService imageService;
+
+    public ImageController(ImageService imageService) {
+        this.imageService = imageService;
+    }
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadImage(@RequestParam("image") MultipartFile file) {
-        if (file.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("File is empty");
-        }
-
+    public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
         try {
-            String fileName = file.getOriginalFilename();
-            File uploadDir = new File(uploadPath);
-            if (!uploadDir.exists()) {
-                uploadDir.mkdirs();
-            }
-            Files.copy(file.getInputStream(), Paths.get(uploadPath).resolve(fileName));
-            return ResponseEntity.ok("Image uploaded successfully: " + fileName);
+            // Convert MultipartFile to byte[]
+            byte[] fileBytes = file.getBytes();
+
+            // Pass byte[] to ImageService
+            Image image = imageService.uploadImage(fileBytes);
+            return new ResponseEntity<>("Image uploaded successfully with ID: " + image.getId(), HttpStatus.OK);
         } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading image");
+            return new ResponseEntity<>("Failed to upload image", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @GetMapping("/{filename}")
-    @ResponseBody
-    public ResponseEntity<byte[]> getImage(@PathVariable String filename) {
-        try {
-            byte[] image = Files.readAllBytes(Paths.get(uploadPath).resolve(filename));
-            return ResponseEntity.ok().contentType(org.springframework.http.MediaType.IMAGE_JPEG).body(image);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+    @GetMapping("/{id}")
+    public ResponseEntity<byte[]> getImageById(@PathVariable Long id) {
+        return imageService.getImageById(id)
+                .map(image -> {
+                    HttpHeaders headers = new HttpHeaders();
+                    headers.set(HttpHeaders.CONTENT_TYPE, "image/jpeg"); // Or other image content type
+                    return new ResponseEntity<>(image.getData(), headers, HttpStatus.OK);
+                })
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }
