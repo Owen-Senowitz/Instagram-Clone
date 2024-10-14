@@ -40,6 +40,7 @@ public class SecurityConfig implements WebMvcConfigurer {
             "/user/signup",
             "/user/login",
             "/images/**",
+            "/h2-console/**",
     };
 
     private static final String[] BLACK_LIST = {
@@ -61,8 +62,9 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .httpBasic(Customizer.withDefaults())
                 .exceptionHandling(exceptionSpec -> exceptionSpec
                         .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
-                .logout(logoutSpec -> logoutSpec.disable());
-
+                .logout(logoutSpec -> logoutSpec.disable())
+                .headers(headers -> headers
+                        .frameOptions().sameOrigin());;
         return http.build();
     }
 
@@ -101,6 +103,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .allowedOrigins("http://localhost:3000")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
+                .exposedHeaders("Authorization")
                 .allowCredentials(true);
     }
 }
