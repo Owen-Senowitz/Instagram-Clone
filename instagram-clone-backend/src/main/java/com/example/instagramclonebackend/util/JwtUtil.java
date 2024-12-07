@@ -1,8 +1,10 @@
 package com.example.instagramclonebackend.util;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -15,6 +17,11 @@ public class JwtUtil {
 
     @Value("${secret.key}")
     private String SECRET_KEY;
+
+    @Autowired
+    public JwtUtil(@Value("${secret.key}") String SECRET_KEY) {
+        this.SECRET_KEY = SECRET_KEY;
+    }
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -38,9 +45,14 @@ public class JwtUtil {
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        try {
+            final String username = extractUsername(token);
+            return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        } catch (ExpiredJwtException e) {
+            return false; // Token is invalid if expired
+        }
     }
+
 
     public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
