@@ -3,9 +3,7 @@ package com.example.instagramclonebackend.service;
 import com.example.instagramclonebackend.model.dto.Image;
 import com.example.instagramclonebackend.repository.ImageRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.Optional;
 
 @Service

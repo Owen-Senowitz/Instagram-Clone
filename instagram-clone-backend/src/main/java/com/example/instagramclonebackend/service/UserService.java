@@ -48,6 +48,8 @@ public class UserService implements UserDetailsService {
     }
 
     public boolean checkIfValidOldPassword(User user, String oldPassword) {
+
+
         return passwordEncoder.matches(oldPassword, user.getPassword());
     }
 
