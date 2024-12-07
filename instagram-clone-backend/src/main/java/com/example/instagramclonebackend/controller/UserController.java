@@ -25,14 +25,18 @@ import java.util.Optional;
 @RequestMapping("/user")
 public class UserController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private UserService userService;
+    private final AuthenticationManager authenticationManager;
+    private final UserService userService;
 
     @Value("${secret.key}")
     private String SECRET_KEY;
+
+    @Autowired
+    public UserController(AuthenticationManager authenticationManager, UserService userService, @Value("${secret.key}") String SECRET_KEY) {
+        this.authenticationManager = authenticationManager;
+        this.userService = userService;
+        this.SECRET_KEY = SECRET_KEY;
+    }
 
     @PostMapping("/signup")
     public ResponseEntity<String> signUp(@RequestBody SignUpRequest user) {
