@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1,
+        "user": {
+            "id": 1,
+            "username": "testuser1",
+            "password": "$2a$10$Nn9U5gG1pq5idP0XxOfLHutrBZ091GaWLRrBS.73XKTJepd7Ssb7K",
+            "email": "testuser1@example.com",
+            "firstName": "Test",
+            "lastName": "User1",
+            "bio": "This is a bio for testuser1.",
+            "profileImageId": 1
+        },
+        "image": {
+            "id": 1
+        },
+        "caption": "This is a test caption",
+        "createdAt": "2024-12-07T17:27:06.993128"
+    }
+]
