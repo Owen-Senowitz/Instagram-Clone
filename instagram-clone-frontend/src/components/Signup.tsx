@@ -43,6 +43,7 @@ const Signup: React.FC = () => {
           variant="outlined"
           fullWidth
           margin="normal"
+          type="username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
