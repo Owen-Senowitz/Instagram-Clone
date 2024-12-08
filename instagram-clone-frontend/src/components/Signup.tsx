@@ -26,8 +26,6 @@ const Signup: React.FC = () => {
         setMessage(error.response.data);
       } else if (error.request) {
         setMessage('No response received from server');
-      } else {
-        setMessage('Error in setting up the request');
       }
     }
   };

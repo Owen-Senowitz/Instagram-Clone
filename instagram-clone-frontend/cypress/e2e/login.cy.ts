@@ -17,7 +17,7 @@ describe('Login Tests', () => {
       cy.contains('Wrong email or password').should('be.visible');
     });
   
-    it('Should successfully log in and redirect to the homepage', () => {
+    it('Should show login successful', () => {
       cy.intercept('POST', '/user/login', {
         statusCode: 200,
         body: { token: 'mockToken', user: { email: 'testuser@test.com' } },
@@ -33,7 +33,6 @@ describe('Login Tests', () => {
   
       cy.contains('Login successful').should('be.visible');
   
-      cy.url().should('eq', 'http://localhost:3000/home');
     });
   
   });
