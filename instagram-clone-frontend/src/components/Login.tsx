@@ -16,11 +16,15 @@ const Login: React.FC = () => {
         email,
         password,
       });
-      login(response.data);  // Store the token in the context
+      login(response.data);
       setMessage('Login successful');
     } catch (error: any) {
       if (error.response) {
-        setMessage(error.response.data);
+        if (error.response.status === 401) {
+          setMessage('Wrong email or password');
+        } else {
+          setMessage(error.response.data || 'An error occurred');
+        }
       } else if (error.request) {
         setMessage('No response received from server');
       } else {
